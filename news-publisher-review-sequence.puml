@@ -1,0 +1,34 @@
+
+@startuml
+'Changes suggested flow.
+actor Reader
+actor Editor
+actor Reporter
+participant UI
+participant PublisherApi
+participant ValidationApi
+Reporter -> UI: Write article
+Reporter -> UI: Submit for review
+UI -> PublisherApi: Article(STATUS:NEW)
+PublisherApi -> PublisherApi: Save Article(STATUS:OPEN_FOR_REVIEW)
+PublisherApi -> ValidationApi: Validate Article Request(STATUS:IN_REVIEW_LEGAL)
+ValidationApi -> ValidationApi: Validate
+PublisherApi -> UI: Show Article in Editor page(STATUS:IN_REVIEW_EDITOR)
+Editor -> UI: Review the Article(STATUS:IN_REVIEW_EDITOR)
+ValidationApi -> PublisherApi: Legal Recommendation
+PublisherApi -> UI:Article(STATUS:REVIEWED_LEGAL)
+Editor -> UI:View Legal Recommendation
+Editor -> UI: Suggest changes to Article(STATUS:REVIEWED_EDITOR)
+UI -> PublisherApi: Article(STATUS:REVIEWED_EDITOR)
+PublisherApi -> Reporter: Email Notification for Article(STATUS:REVIEWED_EDITOR)
+Reporter -> UI: Review Article(STATUS:REVIEWED_LEGAL)
+Reporter -> UI: Submit for re-review Article(STATUS:RE_REVIEW)
+UI -> PublisherApi: Submit for re-review Article(STATUS:RE_REVIEW)
+PublisherApi -> PublisherApi : Article(STATUS:IN_RE_REVIEW)
+PublisherApi -> UI : Show Article in Editor page(STATUS:IN_RE_REVIEW)
+Editor -> UI : Re-Review the Article(STATUS:IN_RE_REVIEW)
+Editor -> UI: Approve Article(STATUS:APPROVED)
+UI -> PublisherApi: Approve Article(STATUS:APPROVED)
+PublisherApi -> UI : Publish Article(STATUS:PUBLISHED)
+Reader -> UI: Read Published Article(STATUS:PUBLISHED)
+@enduml
