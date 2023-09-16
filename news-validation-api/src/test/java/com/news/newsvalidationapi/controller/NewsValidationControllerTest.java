@@ -176,7 +176,7 @@ class NewsValidationControllerTest {
                 httpRequest,
                 ArticleValidationStatus.class);
     }
-
+//TODO:Make this generic exchange method for both get and post
 //    private ResponseEntity<T> exchange(URI uri,
 //                                       HttpMethod method,
 //                                       HttpEntity<Article> httpRequest,
