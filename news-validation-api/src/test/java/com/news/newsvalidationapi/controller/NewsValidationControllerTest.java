@@ -1,6 +1,8 @@
 package com.news.newsvalidationapi.controller;
 
 import com.news.newsvalidationapi.dto.Article;
+import com.news.newsvalidationapi.dto.ArticleValidationStatus;
+import com.news.newsvalidationapi.dto.ValidationStatus;
 import com.news.newsvalidationapi.dto.JwtRequest;
 import com.news.newsvalidationapi.dto.JwtResponse;
 import com.news.newsvalidationapi.service.NewsValidationService;
@@ -19,7 +21,7 @@ import org.springframework.http.*;
 import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment= WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -99,16 +101,38 @@ class NewsValidationControllerTest {
 
     @Test
     public void shouldReceiveHttpResponseBody_forGetValidateDetails() {
+        when(mockNewsValidationService.getArticleValidationDetails(articleId))
+                .thenReturn(new ArticleValidationStatus(articleId, ValidationStatus.IN_REVIEW_LEGAL_1));
 
+        ResponseEntity<ArticleValidationStatus> responseEntity = get(articleId, accessToken);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(new ArticleValidationStatus(articleId, ValidationStatus.IN_REVIEW_LEGAL_1), responseEntity.getBody());
     }
     @Test
-    public void shouldReceiveUnAuthorised_forGetValidateDetails_whenAccessTokenIsInvalid() {
+    public void shouldReceiveBadRequest_forGetValidateDetails_whenArticleIdIsInvalid() {
+        ResponseEntity<ArticleValidationStatus> responseEntity = get("invalid-article-id", accessToken);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
 
+    @Test
+    public void shouldReceiveNotFound_forGetValidateDetails_whenArticleIdIsInvalid() {
+        when(mockNewsValidationService.getArticleValidationDetails(articleId))
+                .thenReturn(null);
+
+        ResponseEntity<ArticleValidationStatus> responseEntity = get(articleId, accessToken);
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void shouldReceiveUnAuthorised_forGetValidateDetails_whenAccessTokenIsInvalid() {
+        ResponseEntity<ArticleValidationStatus> responseEntity = get(articleId, invalidAccessToken);
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
 
     @Test
     public void shouldReceiveUnAuthorised_forGetValidateDetails_whenAccessTokenHasExpired() {
-
+        ResponseEntity<ArticleValidationStatus> responseEntity = get(articleId, expiredAccessToken);
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
 
     @Test
@@ -119,7 +143,8 @@ class NewsValidationControllerTest {
 
     @Test
     public void shouldInvokeValidationService_withGivenArticleId_forGetValidateDetails() {
-
+        get(articleId, accessToken);
+        verify(mockNewsValidationService).getArticleValidationDetails(articleId);
     }
 
     private ResponseEntity<String> postArticle(String accessToken) {
@@ -137,6 +162,19 @@ class NewsValidationControllerTest {
                                                             HttpMethod.POST,
                                                             httpRequest,
                                                             String.class);
+    }
+
+    private ResponseEntity<ArticleValidationStatus> get(String articleId, String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity httpRequest = new HttpEntity(headers);
+
+        return testRestTemplate.exchange(URI.create("http://localhost:8080"+"/news/validation/"+articleId),
+                HttpMethod.GET,
+                httpRequest,
+                ArticleValidationStatus.class);
     }
 
 //    private ResponseEntity<T> exchange(URI uri,
