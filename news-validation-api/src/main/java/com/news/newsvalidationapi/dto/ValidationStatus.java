@@ -1,5 +1,5 @@
 package com.news.newsvalidationapi.dto;
 
 public enum ValidationStatus {
-    IN_REVIEW_LEGAL
+    RECEIVED, FINISHED, IN_REVIEW_LEGAL
 }

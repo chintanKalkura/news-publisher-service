@@ -3,7 +3,9 @@ package com.news.newsvalidationapi.controller;
 import com.news.newsvalidationapi.NewsValidationTestBase;
 import com.news.newsvalidationapi.dto.Article;
 import com.news.newsvalidationapi.dto.ArticleValidationStatus;
+import com.news.newsvalidationapi.dto.JwtResponse;
 import com.news.newsvalidationapi.service.NewsValidationService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,16 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
 
     @MockBean
     private NewsValidationService mockNewsValidationService;
+
+    @BeforeAll
+    public void setUp() {
+        JwtResponse jwtResponse = testRestTemplate.postForObject(
+                URI.create("https://dev-mn7kyev784ac1tj2.us.auth0.com/oauth/token"),
+                jwtRequest,
+                JwtResponse.class);
+
+        this.accessToken = jwtResponse.getAccessToken();
+    }
 
     @Test
     public void shouldReceiveHttpStatusAccepted_forValidateRequest() {
@@ -69,12 +81,12 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
 
     @Test
     public void shouldReceiveHttpResponseBody_forGetValidateDetails() {
-        when(mockNewsValidationService.getArticleValidationDetails(articleId))
-                .thenReturn(articleValidationStatus);
+        when(mockNewsValidationService.getArticleValidationStatus(articleId))
+                .thenReturn(getArticleValidationStatus());
 
         ResponseEntity<ArticleValidationStatus> responseEntity = get(articleId, accessToken);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(articleValidationStatus, responseEntity.getBody());
+        assertEquals(getArticleValidationStatus(), responseEntity.getBody());
     }
     @Test
     public void shouldReceiveBadRequest_forGetValidateDetails_whenArticleIdIsInvalid() {
@@ -84,7 +96,7 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
 
     @Test
     public void shouldReceiveNotFound_forGetValidateDetails_whenArticleIdIsInvalid() {
-        when(mockNewsValidationService.getArticleValidationDetails(articleId))
+        when(mockNewsValidationService.getArticleValidationStatus(articleId))
                 .thenReturn(null);
 
         ResponseEntity<ArticleValidationStatus> responseEntity = get(articleId, accessToken);
@@ -112,7 +124,7 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
     @Test
     public void shouldInvokeValidationService_withGivenArticleId_forGetValidateDetails() {
         get(articleId, accessToken);
-        verify(mockNewsValidationService).getArticleValidationDetails(articleId);
+        verify(mockNewsValidationService).getArticleValidationStatus(articleId);
     }
 
     private ResponseEntity<String> postArticle(String accessToken) {

@@ -30,7 +30,7 @@ public class NewsValidationController {
         if(isValid(articleId))
             return ResponseEntity.badRequest().build();
 
-        ArticleValidationStatus validationStatus  = newsValidationService.getArticleValidationDetails(articleId);
+        ArticleValidationStatus validationStatus  = newsValidationService.getArticleValidationStatus(articleId);
         if(validationStatus == null)
             return ResponseEntity.notFound().build();
 
