@@ -10,6 +10,7 @@ import java.net.URI;
 
 @Component
 public class PublisherApiClient {
+    //TODO Research on RestTemplate and other HttpClient or RestClients.
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
