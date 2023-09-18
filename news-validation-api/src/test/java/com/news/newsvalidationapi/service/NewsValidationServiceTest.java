@@ -67,24 +67,30 @@ class NewsValidationServiceTest extends NewsValidationTestBase {
 
     @Test
     public void shouldCreateValidationReportInRepository_whenCallbackFromLegalRecommendationEngine(){
-        newsValidationService.getRecommendationEngineCallback().accept(validationReport);
-        verify(validationReportRepository, times(1)).save(validationReport);
+        when(validationReportRepository.findById(getValidationReport().getReportId()))
+                .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
+        newsValidationService.getRecommendationEngineCallback().accept(getValidationReport());
+        verify(validationReportRepository, times(1)).save(getValidationReport());
     }
 
     @Test
     public void shouldChangeStatusField_ofArticleValidationStatusInRepository_whenCallbackFromLegalRecommendationEngine(){
+        when(validationReportRepository.findById(getValidationReport().getReportId()))
+                .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
         newsValidationService.validate(article);
-        newsValidationService.getRecommendationEngineCallback().accept(validationReport);
+        newsValidationService.getRecommendationEngineCallback().accept(getValidationReport());
         verify(articleValidationStatusRepository, times(1))
                 .updateArticleValidationStatus(articleId, ValidationStatus.FINISHED);
     }
 
     @Test
     public void shouldSendValidationReport_toPublisherAPI(){
+        when(validationReportRepository.findById(getValidationReport().getReportId()))
+                .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
         newsValidationService.validate(article);
-        newsValidationService.getRecommendationEngineCallback().accept(validationReport);
+        newsValidationService.getRecommendationEngineCallback().accept(getValidationReport(ValidationStatus.FINISHED));
         verify(publisherApiClient, times(1))
-                .postValidationReport(validationReport);
+                .postValidationReport(getValidationReport(ValidationStatus.FINISHED));
     }
 
     @Test

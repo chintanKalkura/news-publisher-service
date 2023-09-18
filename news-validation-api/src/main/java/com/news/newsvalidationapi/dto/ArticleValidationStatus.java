@@ -1,8 +1,6 @@
 package com.news.newsvalidationapi.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Value;
 
@@ -14,4 +12,7 @@ public class ArticleValidationStatus {
     String articleId;
     @Enumerated
     ValidationStatus validationStatus;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "reportId")
+    ValidationReport validationReport;
 }

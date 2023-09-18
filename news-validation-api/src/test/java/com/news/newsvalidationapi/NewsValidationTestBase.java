@@ -12,7 +12,6 @@ public class NewsValidationTestBase {
     protected String accessToken;
     protected String articleId = "74b6a64c-5461-11ee-8c99-0242ac120002";
     protected Article article = new Article(articleId,"test-article","test-article-text");
-    protected ValidationReport validationReport = new ValidationReport("report-id", articleId, "recommendation");
     protected final String invalidAccessToken = "invalidAccessToken";
     protected final String expiredAccessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkxyZUNOYVNZNjFoUVFaZEZXemNlZCJ9." +
             "eyJpc3MiOiJodHRwczovL2Rldi1tbjdreWV2Nzg0YWMxdGoyLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJmcmc0OWlEOVZScjhHeHZUU3FjckRtUFJ" +
@@ -32,5 +31,13 @@ public class NewsValidationTestBase {
 
     protected ArticleValidationStatus getArticleValidationStatus() {
         return getArticleValidationStatus(ValidationStatus.IN_REVIEW_LEGAL);
+    }
+
+    protected ValidationReport getValidationReport(ValidationStatus validationStatus) {
+        return new ValidationReport("report-id", getArticleValidationStatus(validationStatus), "recommendation");
+    }
+
+    protected ValidationReport getValidationReport() {
+        return getValidationReport(ValidationStatus.IN_REVIEW_LEGAL);
     }
 }

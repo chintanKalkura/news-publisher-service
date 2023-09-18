@@ -49,8 +49,10 @@ public class NewsValidationService {
     private final Consumer<ValidationReport> recommendationEngineCallback = (validationReport) -> {
         validationReportRepository.save(validationReport);
         articleValidationStatusRepository
-                .updateArticleValidationStatus(validationReport.getArticleId(), ValidationStatus.FINISHED);
-        publisherApiClient.postValidationReport(validationReport);
+                .updateArticleValidationStatus(validationReport.getValidationStatus().getArticleId(),
+                        ValidationStatus.FINISHED);
+        publisherApiClient.postValidationReport(validationReportRepository
+                .findById(validationReport.getReportId()).orElse(null));
     };
 
     public Consumer<ValidationReport> getRecommendationEngineCallback() {

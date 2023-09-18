@@ -2,6 +2,7 @@ package com.news.newsvalidationapi.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.Value;
 
 /*
@@ -12,6 +13,7 @@ import lombok.Value;
 public class ValidationReport {
     @Id
     String reportId;
-    String articleId;
+    @OneToOne(mappedBy = "validationReport")
+    ArticleValidationStatus validationStatus;
     String recommendation;
 }
