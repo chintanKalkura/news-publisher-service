@@ -4,7 +4,6 @@ import com.news.newsvalidationapi.NewsValidationTestBase;
 import com.news.newsvalidationapi.dto.ArticleValidationStatus;
 import com.news.newsvalidationapi.dto.ValidationStatus;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,10 +30,7 @@ import static org.mockito.Mockito.*;
  *  GetArticleValidationStatus returns empty optional from repository*/
 
 @ExtendWith(MockitoExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class NewsValidationServiceTest extends NewsValidationTestBase {
-    @Mock
-    private ArticleValidationStatusRepository articleValidationStatusRepository;
     @Mock
     private LegalRecommendationEngine legalRecommendationEngine;
     @Mock
@@ -47,24 +43,24 @@ class NewsValidationServiceTest extends NewsValidationTestBase {
     @Test
     public void shouldCreateArticleValidationStatusInRepository_whenValidateIsCalled(){
         ArticleValidationStatus articleValidationStatus = getArticleValidationStatus(ValidationStatus.RECEIVED);
-        newsValidationService.validate(article);
+        newsValidationService.validate(getArticle());
         verify(articleValidationStatusRepository,times(1)).save(articleValidationStatus);
     }
     @Test
     public void shouldSendArticleToLegalRecommendationEngine_whenValidateIsCalled(){
-        newsValidationService.validate(article);
+        newsValidationService.validate(getArticle());
         verify(legalRecommendationEngine,times(1))
-                .recommend(article, newsValidationService.getRecommendationEngineCallback());
+                .recommend(getArticle(), newsValidationService.getRecommendationEngineCallback());
     }
     @Test
     public void shouldChangeStatusField_ofArticleValidationStatusInRepository_whenLegalRecommendationEngineHasAccepted(){
-        when(legalRecommendationEngine.recommend(article, newsValidationService.getRecommendationEngineCallback()))
+        when(legalRecommendationEngine
+                .recommend(getArticle(), newsValidationService.getRecommendationEngineCallback()))
                 .thenReturn(true);
-        newsValidationService.validate(article);
+        newsValidationService.validate(getArticle());
         verify(articleValidationStatusRepository,times(1))
                 .updateArticleValidationStatus(articleId, ValidationStatus.IN_REVIEW_LEGAL);
     }
-
     @Test
     public void shouldCreateValidationReportInRepository_whenCallbackFromLegalRecommendationEngine(){
         when(validationReportRepository.findById(getValidationReport().getReportId()))
@@ -72,27 +68,24 @@ class NewsValidationServiceTest extends NewsValidationTestBase {
         newsValidationService.getRecommendationEngineCallback().accept(getValidationReport());
         verify(validationReportRepository, times(1)).save(getValidationReport());
     }
-
     @Test
-    public void shouldChangeStatusField_ofArticleValidationStatusInRepository_whenCallbackFromLegalRecommendationEngine(){
+    public void shouldChangeStatusField_ofArticleValidationStatusInRepository_afterCallbackFromLegalRecommendationEngine(){
         when(validationReportRepository.findById(getValidationReport().getReportId()))
                 .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
-        newsValidationService.validate(article);
+        newsValidationService.validate(getArticle());
         newsValidationService.getRecommendationEngineCallback().accept(getValidationReport());
         verify(articleValidationStatusRepository, times(1))
                 .updateArticleValidationStatus(articleId, ValidationStatus.FINISHED);
     }
-
     @Test
     public void shouldSendValidationReport_toPublisherAPI(){
         when(validationReportRepository.findById(getValidationReport().getReportId()))
                 .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
-        newsValidationService.validate(article);
+        newsValidationService.validate(getArticle());
         newsValidationService.getRecommendationEngineCallback().accept(getValidationReport(ValidationStatus.FINISHED));
         verify(publisherApiClient, times(1))
                 .postValidationReport(getValidationReport(ValidationStatus.FINISHED));
     }
-
     @Test
     public void shouldReturnArticleValidationStatus_whenGetValidationStatusIsCalled(){
         ArticleValidationStatus articleValidationStatus = getArticleValidationStatus(ValidationStatus.FINISHED);
@@ -103,7 +96,6 @@ class NewsValidationServiceTest extends NewsValidationTestBase {
 
         assertEquals(expected, articleValidationStatus);
     }
-
     @Test
     public void shouldInvokeRepositoryFindById_whenGetValidationStatusIsCalled(){
         ArticleValidationStatus articleValidationStatus = getArticleValidationStatus(ValidationStatus.FINISHED);
@@ -114,6 +106,4 @@ class NewsValidationServiceTest extends NewsValidationTestBase {
 
         verify(articleValidationStatusRepository,times(1)).findById(articleId);
     }
-
-
 }

@@ -3,6 +3,7 @@ package com.news.newsvalidationapi.controller;
 import com.news.newsvalidationapi.NewsValidationTestBase;
 import com.news.newsvalidationapi.dto.Article;
 import com.news.newsvalidationapi.dto.ArticleValidationStatus;
+import com.news.newsvalidationapi.dto.JwtRequest;
 import com.news.newsvalidationapi.dto.JwtResponse;
 import com.news.newsvalidationapi.service.NewsValidationService;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,9 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
 import java.net.URI;
@@ -28,6 +31,20 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
 
     @MockBean
     private NewsValidationService mockNewsValidationService;
+    @Autowired
+    protected TestRestTemplate testRestTemplate;
+    @Autowired
+    protected JwtRequest jwtRequest;
+    protected String accessToken;
+    protected final String invalidAccessToken = "invalidAccessToken";
+    protected final String expiredAccessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkxyZUNOYVNZNjFoUVFaZEZXemNlZCJ9." +
+            "eyJpc3MiOiJodHRwczovL2Rldi1tbjdreWV2Nzg0YWMxdGoyLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJmcmc0OWlEOVZScjhHeHZUU3FjckRtUFJ" +
+            "vSzk1Tm43b0BjbGllbnRzIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo4MDAwL25ld3MvdmFsaWRhdGlvbiIsImlhdCI6MTY5NDc3MzAwMSwiZX" +
+            "hwIjoxNjk0ODU5NDAxLCJhenAiOiJmcmc0OWlEOVZScjhHeHZUU3FjckRtUFJvSzk1Tm43byIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9." +
+            "HQXc9ljPeGYL7bClzIiRlTFc15wEzsx2PDbIFHP58oBvpWtzFRXrlLI50pzu12XNZRtTyDnZx6gKXTkDndHXsPMCsfzalZCxuiBwpw3cMDiFMGr" +
+            "Ub5EpSbqtJAQPR5B8Qau1wDzg6rPItURWOYNYmjNt2SNInrDdmI_mRe530LegwW-WWU97QCmSQIgnMFQsJyozmVzoHYXYTCH5zBn7GEkvWqLvtc" +
+            "FYUyfe_pNWYSHj5gwDX7DEaCg50kANOwRd_Lma9BF8w4udjb2dosMdo44sCaUaJU3-_3_5FYz4UBzi3hZU-2R1J5tTalWF8Lehn17luedm4sLijEUjR943uQ";
+
 
     @BeforeAll
     public void setUp() {
@@ -59,7 +76,8 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
 
     @Test
     public void shouldReceiveHttpStatusBadRequest_forValidateRequest_whenRequestBodyIsNotValid() {
-        ResponseEntity<String> responseEntity = postArticle(new Article(articleId, null, null), accessToken);
+        ResponseEntity<String> responseEntity = postArticle(
+                new Article(articleId, null, null), accessToken);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
@@ -118,7 +136,7 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
     @Test
     public void shouldInvokeValidationService_withGivenArticle_forValidateRequest() {
         postArticle(accessToken);
-        verify(mockNewsValidationService).validate(article);
+        verify(mockNewsValidationService).validate(getArticle());
     }
 
     @Test
@@ -128,7 +146,7 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
     }
 
     private ResponseEntity<String> postArticle(String accessToken) {
-        return postArticle(article, accessToken);
+        return postArticle(getArticle(), accessToken);
     }
 
     private ResponseEntity<String> postArticle(Article article, String accessToken) {

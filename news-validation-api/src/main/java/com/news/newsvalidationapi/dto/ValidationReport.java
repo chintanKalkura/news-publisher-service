@@ -5,9 +5,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import lombok.Value;
 
-/*
-* TODO: Create a relationship between reportId and ArticleId in status entity*/
-
 @Value
 @Entity
 public class ValidationReport {
