@@ -1,6 +1,7 @@
 package com.news.newsvalidationapi;
 
 import com.news.newsvalidationapi.dto.JwtRequest;
+import com.news.newsvalidationapi.service.PublisherApiDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,10 +13,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class CustomisedWebSecurityConfiguration {
-
     @Value("${spring.security.oauth2.resource.server.jwt.issuer-uri}")
     private String issuerUrl;
 
@@ -47,5 +48,16 @@ public class CustomisedWebSecurityConfiguration {
     @ConfigurationProperties("jwt.request")
     public JwtRequest jwtRequest() {
         return new JwtRequest();
+    }
+
+    @Bean
+    @ConfigurationProperties("news.publisher-api.server")
+    public PublisherApiDetails publisherApiDetails() {
+        return new PublisherApiDetails();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }
