@@ -12,5 +12,5 @@ public interface ArticleValidationStatusRepository extends JpaRepository<Article
     @Query("UPDATE ArticleValidationStatus " +
             "SET validationStatus=(:status) " +
             "WHERE articleId=(:articleId)")
-    Boolean updateArticleValidationStatus(@Param("articleId") String articleId, @Param("status") ValidationStatus status);
+    ArticleValidationStatus updateArticleValidationStatus(@Param("articleId") String articleId, @Param("status") ValidationStatus status);
 }

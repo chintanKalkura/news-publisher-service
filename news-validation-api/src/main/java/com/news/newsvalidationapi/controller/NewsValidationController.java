@@ -5,6 +5,8 @@ import com.news.newsvalidationapi.dto.Article;
 import com.news.newsvalidationapi.dto.ArticleValidationStatus;
 import com.news.newsvalidationapi.service.NewsValidationService;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class NewsValidationController {
+    private static final Logger LOGGER = LogManager.getLogger(NewsValidationController.class);
     @Autowired
     private NewsValidationService newsValidationService;
 
     @PostMapping("/news/validation/{articleId}")
     public ResponseEntity<HttpStatus> validateNewsArticle(@PathVariable String articleId,
                                                           @Valid @RequestBody Article article) {
+        LOGGER.info("Received validation request for Article ID: {} and request : {}",articleId, article);
         if(isValid(articleId))
             return ResponseEntity.badRequest().build();
 

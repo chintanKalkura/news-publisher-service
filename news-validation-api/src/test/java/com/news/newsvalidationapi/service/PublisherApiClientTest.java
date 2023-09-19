@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,14 +36,14 @@ class PublisherApiClientTest extends NewsValidationTestBase {
 
         when(restTemplate.postForEntity(URI.create("http://localhost:3002"+"/news/publish/validation/"+articleId),
                                         validationReport,
-                                        ResponseEntity.class))
-                         .thenReturn(ResponseEntity.accepted().build());
+                                        HttpStatus.class))
+                         .thenReturn(ResponseEntity.accepted().body(HttpStatus.ACCEPTED));
 
         publisherApiClient.postValidationReport(validationReport);
 
         verify(restTemplate, times(1)).postForEntity(URI.create("http://localhost:3002"+"/news/publish/validation/"+articleId),
                                             validationReport,
-                                            ResponseEntity.class);
+                                            HttpStatus.class);
     }
 
 }

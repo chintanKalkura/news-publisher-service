@@ -63,29 +63,42 @@ class NewsValidationServiceTest extends NewsValidationTestBase {
     }
     @Test
     public void shouldCreateValidationReportInRepository_whenCallbackFromLegalRecommendationEngine(){
-        when(validationReportRepository.findById(getValidationReport().getReportId()))
-                .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
+        whenConditionsForCallbackTests();
+
         newsValidationService.getRecommendationEngineCallback().accept(getValidationReport());
+
         verify(validationReportRepository, times(1)).save(getValidationReport());
     }
     @Test
     public void shouldChangeStatusField_ofArticleValidationStatusInRepository_afterCallbackFromLegalRecommendationEngine(){
-        when(validationReportRepository.findById(getValidationReport().getReportId()))
-                .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
+        whenConditionsForCallbackTests();
+
         newsValidationService.validate(getArticle());
         newsValidationService.getRecommendationEngineCallback().accept(getValidationReport());
+
         verify(articleValidationStatusRepository, times(1))
                 .updateArticleValidationStatus(articleId, ValidationStatus.FINISHED);
     }
     @Test
     public void shouldSendValidationReport_toPublisherAPI(){
-        when(validationReportRepository.findById(getValidationReport().getReportId()))
-                .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
+        whenConditionsForCallbackTests();
+
         newsValidationService.validate(getArticle());
         newsValidationService.getRecommendationEngineCallback().accept(getValidationReport(ValidationStatus.FINISHED));
+
         verify(publisherApiClient, times(1))
                 .postValidationReport(getValidationReport(ValidationStatus.FINISHED));
     }
+
+    private void whenConditionsForCallbackTests() {
+        when(validationReportRepository.save(any()))
+            .thenReturn(getValidationReport(ValidationStatus.IN_REVIEW_LEGAL));
+        when(validationReportRepository.findById(getValidationReport().getReportId()))
+                .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
+        when(articleValidationStatusRepository.updateArticleValidationStatus(articleId, ValidationStatus.FINISHED))
+                .thenReturn(getArticleValidationStatus(ValidationStatus.FINISHED));
+    }
+
     @Test
     public void shouldReturnArticleValidationStatus_whenGetValidationStatusIsCalled(){
         ArticleValidationStatus articleValidationStatus = getArticleValidationStatus(ValidationStatus.FINISHED);

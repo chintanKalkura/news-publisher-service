@@ -4,6 +4,8 @@ import com.news.newsvalidationapi.dto.Article;
 import com.news.newsvalidationapi.dto.ValidationReport;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +20,7 @@ import java.util.random.RandomGenerator;
 @Validated
 @Service
 public class LegalRecommendationEngine {
+    private static final Logger LOGGER = LogManager.getLogger(LegalRecommendationEngine.class);
     final Map<String,String> authorAndReviewMappings = new HashMap<>();
     final String DEFAULT_MAPPING_KEY = "by rookie author";
     final int MINIMUM_DELAY_IN_SECONDS = 5;
@@ -38,16 +41,19 @@ public class LegalRecommendationEngine {
     }
 
     private void processArticleAsynchronously(Article article, Consumer<ValidationReport> callbackForValidationReport) {
-        CompletableFuture<Void> asyncProcessor = CompletableFuture.runAsync(()->{
+        CompletableFuture.runAsync(()->{
             try {
+                LOGGER.info("Starting LegalRecommendation process Asynchronously for Article : {}", article);
                 int delayInSeconds = RandomGenerator.getDefault()
                         .nextInt(MINIMUM_DELAY_IN_SECONDS, MAXIMUM_DELAY_IN_SECONDS);
                 Thread.sleep(delayInSeconds* 1000L);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            article.getId();
-            callbackForValidationReport.accept(getValidationReport(article));
+            ValidationReport validationReport = getValidationReport(article);
+            LOGGER.info("Finished LegalRecommendation process Asynchronously for Article : {} resulting in ValidationReport: {}",
+                    article, validationReport);
+            callbackForValidationReport.accept(validationReport);
         });
     }
 
