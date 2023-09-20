@@ -26,7 +26,7 @@ public class CustomisedWebSecurityConfiguration {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(
                 (requests) -> requests
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/**")).authenticated()
+                        .anyRequest().authenticated()
         );
         http.csrf(csrf->
                 csrf.disable()
