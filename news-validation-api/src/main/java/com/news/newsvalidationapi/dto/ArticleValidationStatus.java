@@ -1,10 +1,14 @@
 package com.news.newsvalidationapi.dto;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
-@Value
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 @Builder
 @Entity
 public class ArticleValidationStatus {
@@ -12,7 +16,4 @@ public class ArticleValidationStatus {
     String articleId;
     @Enumerated
     ValidationStatus validationStatus;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reportId")
-    ValidationReport validationReport;
 }

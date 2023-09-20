@@ -84,19 +84,17 @@ class NewsValidationServiceTest extends NewsValidationTestBase {
         whenConditionsForCallbackTests();
 
         newsValidationService.validate(getArticle());
-        newsValidationService.getRecommendationEngineCallback().accept(getValidationReport(ValidationStatus.FINISHED));
+        newsValidationService.getRecommendationEngineCallback().accept(getValidationReport());
 
         verify(publisherApiClient, times(1))
-                .postValidationReport(getValidationReport(ValidationStatus.FINISHED));
+                .postValidationReport(getValidationReport());
     }
 
     private void whenConditionsForCallbackTests() {
         when(validationReportRepository.save(any()))
-            .thenReturn(getValidationReport(ValidationStatus.IN_REVIEW_LEGAL));
+            .thenReturn(getValidationReport());
         when(validationReportRepository.findById(getValidationReport().getReportId()))
-                .thenReturn(Optional.of(getValidationReport(ValidationStatus.FINISHED)));
-        when(articleValidationStatusRepository.updateArticleValidationStatus(articleId, ValidationStatus.FINISHED))
-                .thenReturn(getArticleValidationStatus(ValidationStatus.FINISHED));
+                .thenReturn(Optional.of(getValidationReport()));
     }
 
     @Test

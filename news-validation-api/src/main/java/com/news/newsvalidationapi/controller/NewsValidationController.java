@@ -3,6 +3,7 @@ package com.news.newsvalidationapi.controller;
 import com.news.newsvalidationapi.CONSTANTS;
 import com.news.newsvalidationapi.dto.Article;
 import com.news.newsvalidationapi.dto.ArticleValidationStatus;
+import com.news.newsvalidationapi.dto.ValidationReport;
 import com.news.newsvalidationapi.service.NewsValidationService;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +19,7 @@ public class NewsValidationController {
     @Autowired
     private NewsValidationService newsValidationService;
 
-    @PostMapping("/news/validation/{articleId}")
+    @PostMapping("/news/validation/article/{articleId}")
     public ResponseEntity<HttpStatus> validateNewsArticle(@PathVariable String articleId,
                                                           @Valid @RequestBody Article article) {
         LOGGER.info("Received validation request for Article ID: {} and request : {}",articleId, article);
@@ -29,7 +30,8 @@ public class NewsValidationController {
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping("/news/validation/{articleId}")
+    @GetMapping("/news/validation/article/{articleId}")
+    @ResponseBody
     public ResponseEntity<ArticleValidationStatus> getValidationStatus(@PathVariable String articleId) {
         if(isValid(articleId))
             return ResponseEntity.badRequest().build();
@@ -39,6 +41,19 @@ public class NewsValidationController {
             return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(validationStatus);
+    }
+
+    @GetMapping("/news/validation/article/{articleId}/report")
+    @ResponseBody
+    public ResponseEntity<ValidationReport> getValidationReport(@PathVariable String articleId) {
+        if(isValid(articleId))
+            return ResponseEntity.badRequest().build();
+
+        ValidationReport validationReport  = newsValidationService.getArticleValidationReport(articleId);
+        if(validationReport == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(validationReport);
     }
 
     private static boolean isValid(String articleId) {

@@ -32,7 +32,7 @@ class PublisherApiClientTest extends NewsValidationTestBase {
     public void shouldPostTheValidationReportToPublisherApi() {
         when(publisherApiDetails.getBaseUrl()).thenReturn("http://localhost:3002");
         when(publisherApiDetails.getResourceUrl()).thenReturn("/news/publish/validation/");
-        ValidationReport validationReport = getValidationReport(ValidationStatus.FINISHED);
+        ValidationReport validationReport = getValidationReport();
 
         when(restTemplate.postForEntity(URI.create("http://localhost:3002"+"/news/publish/validation/"+articleId),
                                         validationReport,

@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -25,8 +24,6 @@ public class LegalRecommendationEngine {
     final String DEFAULT_MAPPING_KEY = "by rookie author";
     final int MINIMUM_DELAY_IN_SECONDS = 5;
     final int MAXIMUM_DELAY_IN_SECONDS = 10;
-    @Autowired
-    private ArticleValidationStatusRepository articleValidationStatusRepository;
 
     public LegalRecommendationEngine() {
         authorAndReviewMappings.put("by senior author","review_needed_once");
@@ -67,8 +64,8 @@ public class LegalRecommendationEngine {
 
     private ValidationReport buildValidationReport(String articleId, String recommendationValue) {
         return new ValidationReport(getUUID(),
-                articleValidationStatusRepository.findById(articleId).orElse(null),
-                "recommendation:"+ recommendationValue);
+                                    articleId,
+                                    "recommendation:"+ recommendationValue);
     }
 
     private String getUUID() {

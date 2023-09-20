@@ -156,7 +156,7 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
 
         HttpEntity<Article> httpRequest = new HttpEntity<>(article,headers);
 
-        return testRestTemplate.exchange(URI.create("http://localhost:8080"+"/news/validation/"+articleId),
+        return testRestTemplate.exchange(URI.create("http://localhost:8080"+"/news/validation/article/"+articleId),
                                                             HttpMethod.POST,
                                                             httpRequest,
                                                             String.class);
@@ -169,7 +169,7 @@ class NewsValidationControllerTest extends NewsValidationTestBase {
 
         HttpEntity httpRequest = new HttpEntity(headers);
 
-        return testRestTemplate.exchange(URI.create("http://localhost:8080"+"/news/validation/"+articleId),
+        return testRestTemplate.exchange(URI.create("http://localhost:8080"+"/news/validation/article/"+articleId),
                 HttpMethod.GET,
                 httpRequest,
                 ArticleValidationStatus.class);

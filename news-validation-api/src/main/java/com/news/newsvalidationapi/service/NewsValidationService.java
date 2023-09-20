@@ -38,10 +38,11 @@ public class NewsValidationService {
         Boolean recommendationResult = legalRecommendationEngine.recommend(article, recommendationEngineCallback);
 
         if(recommendationResult) {
-            var newStatus = articleValidationStatusRepository
+            articleValidationStatusRepository
                     .updateArticleValidationStatus(article.getId(), ValidationStatus.IN_REVIEW_LEGAL);
 
-            LOGGER.info("Updated ArticleValidationStatus: {} in repository for articleId: {}", newStatus, article.getId());
+            LOGGER.info("Updated ArticleValidationStatus to: {} in repository for articleId: {}",
+                    ValidationStatus.IN_REVIEW_LEGAL, article.getId());
         }
     }
 
@@ -59,19 +60,34 @@ public class NewsValidationService {
     }
 
     private final Consumer<ValidationReport> recommendationEngineCallback = (validationReport) -> {
+        Logger LOGGER_CALLBACK = LogManager.getLogger(NewsValidationService.class);
         var vr = validationReportRepository.save(validationReport);
-        LOGGER.info("Saved ValidationReport: {} in repository for articleId: {}", vr, vr.getValidationStatus().getArticleId());
+        LOGGER_CALLBACK.info("Saved ValidationReport: {} in repository for articleId: {}", vr, vr.getArticleId());
 
-        var newStatus = articleValidationStatusRepository
-                .updateArticleValidationStatus(validationReport.getValidationStatus().getArticleId(),
+        articleValidationStatusRepository
+                .updateArticleValidationStatus(validationReport.getArticleId(),
                         ValidationStatus.FINISHED);
-        LOGGER.info("Updated ArticleValidationStatus: {} in repository for articleId: {}", newStatus, newStatus.getArticleId());
-
-        publisherApiClient.postValidationReport(validationReportRepository
-                .findById(validationReport.getReportId()).orElse(null));
+        LOGGER_CALLBACK.info("Updated ArticleValidationStatus to: {} in repository for articleId: {}",
+                ValidationStatus.FINISHED, validationReport.getArticleId());
+        var vr1 = validationReportRepository
+                .findById(validationReport.getReportId()).orElse(null);
+        publisherApiClient.postValidationReport(vr1);
     };
 
     public Consumer<ValidationReport> getRecommendationEngineCallback() {
         return recommendationEngineCallback;
+    }
+
+    public ValidationReport getArticleValidationReport(String articleId) {
+        Optional<ValidationReport> validationReportOptional = validationReportRepository.findByArticleId(articleId);
+
+        if(validationReportOptional.isPresent()) {
+            LOGGER.info("Found ValidationReport in repository for articleId: {}",articleId);
+            return validationReportOptional.get();
+        }
+        else {
+            LOGGER.info("Did not find ValidationReport in repository for articleId: {}",articleId);
+            return null;//handle scenario.
+        }
     }
 }

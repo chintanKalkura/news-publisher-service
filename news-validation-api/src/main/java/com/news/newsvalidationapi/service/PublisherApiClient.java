@@ -24,7 +24,7 @@ public class PublisherApiClient {
         LOGGER.info("Posting ValidationReport: {} to PublisherApi: {}", validationReport, publisherApiDetails);
         String url = publisherApiDetails.getBaseUrl()+
                 publisherApiDetails.getResourceUrl()+
-                validationReport.getValidationStatus().getArticleId();
+                validationReport.getArticleId();
 
         ResponseEntity<HttpStatus> responseEntity = restTemplate.postForEntity(
                                                             URI.create(url),

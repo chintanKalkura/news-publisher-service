@@ -36,17 +36,13 @@ public class NewsValidationTestBase {
         return getArticleValidationStatus(ValidationStatus.IN_REVIEW_LEGAL);
     }
 
-    protected ValidationReport getValidationReport(ValidationStatus validationStatus) {
-        return new ValidationReport(reportId, getArticleValidationStatus(validationStatus), "recommendation");
-    }
-
     protected ValidationReport getValidationReport() {
-        return getValidationReport(ValidationStatus.IN_REVIEW_LEGAL);
+        return new ValidationReport(reportId, articleId, "recommendation");
     }
 
     protected ValidationReport getValidationReport(String recommendationValue) {
         return new ValidationReport(reportId,
-                getArticleValidationStatus(),
+                articleId,
                 "recommendation"+":"+recommendationValue);
     }
 }

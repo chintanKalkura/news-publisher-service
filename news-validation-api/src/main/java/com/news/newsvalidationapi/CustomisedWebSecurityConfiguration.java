@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -25,8 +26,7 @@ public class CustomisedWebSecurityConfiguration {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(
                 (requests) -> requests
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/**")).authenticated()
         );
         http.csrf(csrf->
                 csrf.disable()

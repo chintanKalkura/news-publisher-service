@@ -1,16 +1,18 @@
 package com.news.newsvalidationapi.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import lombok.Value;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Value
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 @Entity
 public class ValidationReport {
     @Id
     String reportId;
-    @OneToOne(mappedBy = "validationReport")
-    ArticleValidationStatus validationStatus;
+    String articleId;
     String recommendation;
 }
