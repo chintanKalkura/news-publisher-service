@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: news-validation-api
+spec:
+  replicas: 3 # Number of replicas that will be created for this deployment
+  selector:
+    matchLabels:
+      app: news-validation-api
+  template:
+    metadata:
+      labels:
+        app: news-validation-api
+    spec:
+      containers:
+        - name: news-validation-api
+          image: news-validation-api:latest
+          # Image that will be used to containers in the cluster
+#          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+# The port that the container is running on in the cluster
