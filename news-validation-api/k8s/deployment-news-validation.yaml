@@ -13,10 +13,26 @@ spec:
         app: news-validation-api
     spec:
       containers:
+        - name: mysql-news
+          image: mysql:8-oracle
+          # Image that will be used to containers in the cluster
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+              # The port that the container is running on in the cluster
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "my-secret-pw"
+            - name: MYSQL_DATABASE
+              value: "newsValidationDB"
+            - name: MYSQL_USER
+              value: "news-validation-api"
+            - name: MYSQL_PASSWORD
+              value: "NewsValidationApiPassword"
         - name: news-validation-api
           image: news-validation-api:latest
           # Image that will be used to containers in the cluster
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
               # The port that the container is running on in the cluster
