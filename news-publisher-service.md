@@ -17,7 +17,7 @@ Repeating steps 3 to 7.
 
 The purpose is to practice implementing security features. OAUTH2.0 - bearer and JWT. Web page login and 
 remember me feature(cookies).
-Auth implmentation for each step as below:
+Auth implementation for each step as below:
 1. Web page login. author role
 2.
 3. OAUTH2.0 Bearer JWT
