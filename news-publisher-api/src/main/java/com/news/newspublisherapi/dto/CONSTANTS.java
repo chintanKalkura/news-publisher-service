@@ -1,4 +1,4 @@
-package com.news.newspublisherapi;
+package com.news.newspublisherapi.dto;
 
 public class CONSTANTS {
 
