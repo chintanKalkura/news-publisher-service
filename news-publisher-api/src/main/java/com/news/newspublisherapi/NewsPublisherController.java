@@ -23,9 +23,8 @@ import static com.news.newspublisherapi.dto.CONSTANTS.*;
 @RestController
 public class NewsPublisherController {
     private final Logger LOGGER = LogManager.getLogger(NewsPublisherController.class);
-
     @Autowired
-    private ArticleRepository articleRepository;
+    private GetResourceService getResourceService;
 
     @PostMapping("news/publish/article/{articleId}")
     public ResponseEntity<HttpStatus> submitNewsArticle(@PathVariable String articleId,
@@ -57,7 +56,7 @@ public class NewsPublisherController {
         if(!isUserAuthorisedForArticleStatus(articleStatus, authentication)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        List<Article> articleList = articleRepository.findAll();
+        List<Article> articleList = getResourceService.findAll();
         return ResponseEntity.ok(
                 articleList.stream()
                         .filter(article -> article.getArticleStatus().equals(articleStatus))
@@ -67,14 +66,14 @@ public class NewsPublisherController {
     @GetMapping("/news/publish/article/{articleId}")
     @ResponseBody
     public ResponseEntity<Article> getArticle(@PathVariable String articleId) {
-        Article article = articleRepository.findById(articleId).orElse(null);
+        Article article = getResourceService.findById(articleId).orElse(null);
         return ResponseEntity.ok(article);
     }
 
     @GetMapping("/news/publish/article/{articleId}/status")
     @ResponseBody
     public ResponseEntity<ArticleStatus> getStatusOfArticle(@PathVariable String articleId) {
-        Optional<Article> article = articleRepository.findById(articleId);
+        Optional<Article> article = getResourceService.findById(articleId);
         return ResponseEntity.ok(article.map(Article::getArticleStatus).orElse(null));
     }
 
