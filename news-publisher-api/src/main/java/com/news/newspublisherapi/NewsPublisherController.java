@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.news.newspublisherapi.dto.CONSTANTS.*;
 
@@ -25,6 +24,8 @@ public class NewsPublisherController {
     private final Logger LOGGER = LogManager.getLogger(NewsPublisherController.class);
     @Autowired
     private GetResourceService getResourceService;
+    @Autowired
+    private PostResourceService postResourceService;
 
     @PostMapping("news/publish/article/{articleId}")
     public ResponseEntity<HttpStatus> submitNewsArticle(@PathVariable String articleId,
@@ -47,6 +48,7 @@ public class NewsPublisherController {
     @PatchMapping("news/publish/article/{articleId}/status/{articleStatus}")
     public ResponseEntity<HttpStatus> updateNewsArticleStatus(@PathVariable String articleId,
                                                         @NotNull @PathVariable ArticleStatus articleStatus) {
+        postResourceService.updateNewsArticleStatus(articleId, articleStatus);
         return ResponseEntity.accepted().build();
     }
 
@@ -56,11 +58,8 @@ public class NewsPublisherController {
         if(!isUserAuthorisedForArticleStatus(articleStatus, authentication)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        List<Article> articleList = getResourceService.findAll();
-        return ResponseEntity.ok(
-                articleList.stream()
-                        .filter(article -> article.getArticleStatus().equals(articleStatus))
-                        .collect(Collectors.toList()));
+        List<Article> articleList = getResourceService.findAll(articleStatus);
+        return ResponseEntity.ok(articleList);
     }
 
     @GetMapping("/news/publish/article/{articleId}")
