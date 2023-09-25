@@ -2,6 +2,7 @@ package com.news.newspublisherapi;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -19,6 +20,12 @@ public class CustomisedSecurityConfiguration {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(
                 (requests) -> requests
+                        .requestMatchers(HttpMethod.GET,"news/publish/article/status/**").hasAnyRole("READER","AUTHOR","EDITOR")
+                        .requestMatchers(HttpMethod.GET, "/news/publish/article/**").hasAnyRole("AUTHOR","EDITOR")
+                        .requestMatchers(HttpMethod.POST, "news/publish/article/**").hasAnyRole("AUTHOR")
+                        .requestMatchers(HttpMethod.POST, "news/publish/article/**/recommend").hasAnyRole("EDITOR")
+                        .requestMatchers(HttpMethod.PUT, "news/publish/article/**").hasAnyRole("AUTHOR")
+                        .requestMatchers(HttpMethod.PATCH, "news/publish/article/**/status/**").hasAnyRole("EDITOR")
                         .anyRequest().authenticated()
         );
         http.csrf(csrf->
