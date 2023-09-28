@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ScheduledNewsArticlePublisher {
     private final Logger LOGGER = LogManager.getLogger(ScheduledNewsArticlePublisher.class);
-
     @Autowired
     private ArticleRepository articleRepository;
     @Autowired

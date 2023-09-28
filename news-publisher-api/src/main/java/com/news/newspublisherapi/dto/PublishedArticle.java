@@ -3,10 +3,7 @@ package com.news.newspublisherapi.dto;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 /*
@@ -14,6 +11,7 @@ import org.springframework.data.cassandra.core.mapping.UserDefinedType;
  * The articles will be published on website and on daily paper.
  * These will have comments thread.
  * */
+@Builder
 @Setter
 @Getter
 @NoArgsConstructor
