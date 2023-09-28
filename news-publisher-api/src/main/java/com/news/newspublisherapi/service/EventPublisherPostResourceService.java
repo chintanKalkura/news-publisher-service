@@ -1,4 +1,4 @@
-package com.news.newspublisherapi;
+package com.news.newspublisherapi.service;
 
 import com.news.newspublisherapi.dto.Article;
 import com.news.newspublisherapi.dto.ArticleStatus;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class EventPublisherPostResourceService extends CacheablePostResourceService{
+public class EventPublisherPostResourceService extends CacheablePostResourceService {
 
     @Autowired
     private KafkaTemplate<String,String> kafkaTemplate;

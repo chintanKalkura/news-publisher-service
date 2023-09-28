@@ -1,9 +1,8 @@
-package com.news.newspublisherapi;
+package com.news.newspublisherapi.service;
 
 import com.news.newspublisherapi.dto.Article;
 import com.news.newspublisherapi.dto.ArticleStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
