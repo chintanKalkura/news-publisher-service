@@ -1,7 +1,9 @@
-package com.news.newspublisherapi;
+package com.news.newspublisherapi.dummyNewsPopulators;
 
 import com.news.newspublisherapi.dto.Article;
 import com.news.newspublisherapi.dto.ArticleStatus;
+import com.news.newspublisherapi.service.ArticleRepository;
+import com.news.newspublisherapi.service.EventPublisherPostResourceService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ScheduledNewsArticlePublisher {
     private final Logger LOGGER = LogManager.getLogger(ScheduledNewsArticlePublisher.class);
-
     @Autowired
     private ArticleRepository articleRepository;
     @Autowired

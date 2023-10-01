@@ -1,7 +1,8 @@
-package com.news.newspublisherapi;
+package com.news.newspublisherapi.dummyNewsPopulators;
 
 import com.news.newspublisherapi.dto.Article;
 import com.news.newspublisherapi.dto.ArticleStatus;
+import com.news.newspublisherapi.service.ArticleRepository;
 import jakarta.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -2,6 +2,8 @@ package com.news.newspublisherapi;
 
 import com.news.newspublisherapi.dto.Article;
 import com.news.newspublisherapi.dto.ArticleStatus;
+import com.news.newspublisherapi.service.GetResourceService;
+import com.news.newspublisherapi.service.PostResourceService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
