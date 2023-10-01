@@ -16,6 +16,6 @@ Cassandra
 
 ```docker exec -it cassandra bash```
 
-```cqlsh```
+```cqlsh``` 
 
 ```CREATE KEYSPACE newspaper WITH replication = {'class' : 'SimpleStrategy', 'replication_factor' : 1};```
